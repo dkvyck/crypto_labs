@@ -1,12 +1,7 @@
 import 'dart:math';
 
 class SeriesGenerator {
-  Future<List<num>> generate(int amount) async {
-    num x0 = 64;
-    num c = 8;
-    num a = pow(2, 3);
-    num m = pow(2, 13) - 1;
-
+  Future<List<num>> generate(int amount, num x0, num c, num a, num m) async {
     List<num> result = [];
     num previousNumber = x0;
     for (int i = 0; i < amount; i++) {
