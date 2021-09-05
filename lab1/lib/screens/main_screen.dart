@@ -13,7 +13,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late GlobalKey<FormState> _formKey;
   late SeriesGenerator generator;
-  late SeriesHelper seriesHelper;
 
   late Parser parser = Parser();
 
@@ -30,7 +29,6 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _formKey = GlobalKey<FormState>();
     generator = SeriesGenerator();
-    seriesHelper = SeriesHelper();
   }
 
   @override
@@ -71,7 +69,8 @@ class _MainScreenState extends State<MainScreen> {
                         width: 20,
                       ),
                       ElevatedButton(
-                          onPressed: _evaluate, child: Text('Generate')),
+                          onPressed: () async => _evaluate(),
+                          child: Text('Generate')),
                       SizedBox(
                         width: mQuery.width * 0.005,
                       ),
@@ -87,6 +86,7 @@ class _MainScreenState extends State<MainScreen> {
                               } catch (_) {
                                 return 'Enter a valid module';
                               }
+
                               return null;
                             } else
                               return 'Enter an module';
@@ -214,11 +214,21 @@ class _MainScreenState extends State<MainScreen> {
           .evaluate(EvaluationType.REAL, ContextModel());
       var c = int.parse(increaseController.text);
       var x0 = int.parse(initialValueController.text);
-      var series = (await generator.generate(
-          int.parse(amountController.text), x0, c, a, m));
-      outputController.text = series.join(" ");
-      periodController.text = seriesHelper.findPeriod(series).toString();
-      seriesHelper.writeToFile(series);
+      var amount = int.parse(amountController.text);
+
+      outputController.clear();
+      periodController.clear();
+
+      if (!generator.subject.hasListener)
+        generator.subject.listen((state) {
+          if (state is ValueGeneratorState) {
+            outputController.text += ' ${state.value.toString()} ';
+          } else if (state is PeriodGeneratorState) {
+            periodController.text = state.period.toString();
+          }
+        });
+
+      generator.generate(amount, x0, c, a, m);
     }
   }
 }
