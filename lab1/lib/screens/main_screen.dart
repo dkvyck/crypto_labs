@@ -18,6 +18,7 @@ class _MainScreenState extends State<MainScreen> {
 
   TextEditingController outputController = TextEditingController();
   TextEditingController amountController = TextEditingController();
+  TextEditingController fileAmountController = TextEditingController();
   TextEditingController periodController = TextEditingController();
   TextEditingController moduleController = TextEditingController();
   TextEditingController multiplierController = TextEditingController();
@@ -47,32 +48,50 @@ class _MainScreenState extends State<MainScreen> {
                   key: _formKey,
                   child: Row(
                     children: [
-                      Container(
-                        width: mQuery.width * 0.2,
-                        child: TextFormField(
-                          controller: amountController,
-                          decoration: InputDecoration(
-                              helperText: 'Enter amount', labelText: 'Amount'),
-                          validator: (value) {
-                            if (value != null) {
-                              int? number = int.tryParse(value);
+                      Column(
+                        children: [
+                          Container(
+                            width: mQuery.width * 0.2,
+                            child: TextFormField(
+                              controller: amountController,
+                              decoration: InputDecoration(
+                                  helperText: 'Enter amount',
+                                  labelText: 'UI Amount'),
+                              validator: (value) {
+                                if (value != null) {
+                                  int? number = int.tryParse(value);
 
-                              return number != null
-                                  ? null
-                                  : 'Enter a valid amount';
-                            } else
-                              return 'Enter an amount';
-                          },
-                        ),
+                                  return number != null
+                                      ? null
+                                      : 'Enter a valid amount';
+                                } else
+                                  return 'Enter an amount';
+                              },
+                            ),
+                          ),
+                          Container(
+                            width: mQuery.width * 0.2,
+                            child: TextFormField(
+                              controller: fileAmountController,
+                              decoration: InputDecoration(
+                                  helperText: 'Enter amount',
+                                  labelText: 'File Amount'),
+                              validator: (value) {
+                                if (value != null) {
+                                  int? number = int.tryParse(value);
+
+                                  return number != null
+                                      ? null
+                                      : 'Enter a valid amount';
+                                } else
+                                  return 'Enter an amount';
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(
                         width: 20,
-                      ),
-                      ElevatedButton(
-                          onPressed: () async => _evaluate(),
-                          child: Text('Generate')),
-                      SizedBox(
-                        width: mQuery.width * 0.005,
                       ),
                       Container(
                         padding: EdgeInsets.all(10),
@@ -182,6 +201,12 @@ class _MainScreenState extends State<MainScreen> {
                           readOnly: true,
                         ),
                       ),
+                      SizedBox(
+                        width: mQuery.width * 0.005,
+                      ),
+                      ElevatedButton(
+                          onPressed: () => _evaluate(),
+                          child: Text('Generate')),
                     ],
                   ),
                 ),
@@ -215,6 +240,7 @@ class _MainScreenState extends State<MainScreen> {
       var c = int.parse(increaseController.text);
       var x0 = int.parse(initialValueController.text);
       var amount = int.parse(amountController.text);
+      var fileAmount = int.parse(fileAmountController.text);
 
       outputController.clear();
       periodController.clear();
@@ -222,13 +248,13 @@ class _MainScreenState extends State<MainScreen> {
       if (!generator.subject.hasListener)
         generator.subject.listen((state) {
           if (state is ValueGeneratorState) {
-            outputController.text += ' ${state.value.toString()} ';
+            outputController.text += ' ${state.value.toStringAsFixed(0)} ';
           } else if (state is PeriodGeneratorState) {
             periodController.text = state.period.toString();
           }
         });
 
-      generator.generate(amount, x0, c, a, m);
+      generator.generate(amount, x0, c, a, m, fileAmount: fileAmount);
     }
   }
 }

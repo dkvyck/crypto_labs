@@ -11,9 +11,9 @@ class FileWriter {
     return series.indexOf(firstValue) + 1;
   }
 
-  void openFile(String filename) {
+  void openFile(String filename, {FileMode mode = FileMode.writeOnly}) {
     File file = File(filename);
-    _fileSink = file.openWrite();
+    _fileSink = file.openWrite(mode: mode);
   }
 
   void closeFile() {
