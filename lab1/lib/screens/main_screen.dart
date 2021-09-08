@@ -13,6 +13,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late GlobalKey<FormState> _formKey;
   late SeriesGenerator generator;
+  bool inProgress = false;
 
   late Parser parser = Parser();
 
@@ -205,7 +206,12 @@ class _MainScreenState extends State<MainScreen> {
                         width: mQuery.width * 0.005,
                       ),
                       ElevatedButton(
-                          onPressed: () => _evaluate(),
+                          style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  inProgress
+                                      ? Colors.grey
+                                      : Theme.of(context).primaryColor)),
+                          onPressed: inProgress ? null : () => _evaluate(),
                           child: Text('Generate')),
                     ],
                   ),
@@ -248,9 +254,12 @@ class _MainScreenState extends State<MainScreen> {
       if (!generator.subject.hasListener)
         generator.subject.listen((state) {
           if (state is ValueGeneratorState) {
+            if (!inProgress) inProgress = true;
             outputController.text += ' ${state.value.toStringAsFixed(0)} ';
           } else if (state is PeriodGeneratorState) {
             periodController.text = state.period.toString();
+          } else if (state is FinishedGeneratorState) {
+            inProgress = false;
           }
         });
 

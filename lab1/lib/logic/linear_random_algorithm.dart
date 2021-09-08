@@ -22,13 +22,11 @@ class SeriesGenerator {
     _fileWriter.openFile('output.txt');
     num firstNumber = x0;
     num randomNumber = x0;
+    num previousNumber = x0;
 
-    var first5 = <num>[];
     _subject.sink.add(ValueGeneratorState(x0, 0));
-    for (int i = 0;; i++) {
-      if (i < 5) {
-        first5.add(randomNumber);
-      }
+    for (int i = 0;; ++i) {
+      previousNumber = randomNumber;
       randomNumber = (a * randomNumber + c) % m;
 
       if (i < uiAmount) {
@@ -38,15 +36,14 @@ class SeriesGenerator {
 
       if (i < fileAmount) {
         // reopening stream to free memory
-        if (i + 1 % 10000 == 0) {
-          _fileWriter.closeFile();
-          _fileWriter.openFile('output.txt', mode: FileMode.writeOnlyAppend);
+        if ((i + 1) % 10000000 == 0) {
+          await _fileWriter.flush();
         }
         _fileWriter.sink?.write(' ${randomNumber.toInt()}');
         // write to file
       }
       // if period found
-      if (first5.contains(randomNumber)) {
+      if (randomNumber == firstNumber || randomNumber == previousNumber) {
         // if (firstNumber == randomNumber) {
         _subject.sink.add(PeriodGeneratorState(i + 1));
         _subject.sink.add(FinishedGeneratorState());

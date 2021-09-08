@@ -13,4 +13,8 @@ class FileWriter {
   void closeFile() {
     _fileSink.close();
   }
+
+  Future<void> flush() async {
+    return _fileSink.flush();
+  }
 }
