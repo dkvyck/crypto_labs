@@ -19,8 +19,6 @@ class _MD5 extends Hash {
       ByteConversionSink.from(_MD5Sink(sink));
 }
 
-/// Data from a non-linear mathematical function that functions as
-/// reproducible noise.
 const _noise = [
   0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, //
   0xa8304613, 0xfd469501, 0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be,
@@ -35,7 +33,6 @@ const _noise = [
   0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
 ];
 
-/// Per-round shift amounts.
 const _shiftAmounts = [
   07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 07, 12, 17, 22, 05, 09, 14, //
   20, 05, 09, 14, 20, 05, 09, 14, 20, 05, 09, 14, 20, 04, 11, 16, 23, 04, 11,

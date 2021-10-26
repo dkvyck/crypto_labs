@@ -1,13 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:lab1/logic/series_helper.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SeriesGenerator {
+  FileWriter _fileWriter = FileWriter();
   final BehaviorSubject<GeneratorState> _subject =
       BehaviorSubject<GeneratorState>();
-  FileWriter _fileWriter = FileWriter();
 
   BehaviorSubject<GeneratorState> get subject => _subject;
 
@@ -19,7 +17,7 @@ class SeriesGenerator {
     num m, {
     int fileAmount = 1000,
   }) async {
-    _fileWriter.openFile('output.txt');
+    _fileWriter.openFileSync('output.txt');
     num firstNumber = x0;
     num randomNumber = x0;
     num previousNumber = x0;
@@ -36,10 +34,10 @@ class SeriesGenerator {
 
       if (i < fileAmount) {
         // reopening stream to free memory
-        if ((i + 1) % 10000000 == 0) {
-          await _fileWriter.flush();
+        if ((i + 1) % 100000 == 0) {
+          _fileWriter.syncFile = await _fileWriter.syncFile.flush();
         }
-        _fileWriter.sink?.write(' ${randomNumber.toInt()}');
+        _fileWriter.syncFile.writeStringSync(' ${randomNumber}');
         // write to file
       }
       // if period found
@@ -61,8 +59,8 @@ class ValueGeneratorState extends GeneratorState {
       : this.value = value,
         this.index = index;
 
-  final num value;
   final int index;
+  final num value;
 }
 
 @immutable
